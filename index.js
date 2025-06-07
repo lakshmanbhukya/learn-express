@@ -1,13 +1,32 @@
 const express = require("express");
 const axios = require("axios");
+const connectDB = require("./config/db");
+const Student = require("./models/Student");
+const studentRoutes = require("./routes/studentRoutes");
+
 const app = express();
 const port = 3000;
 const API_URL = "https://6803b4a679cb28fb3f597083.mockapi.io/api/users";
-//my first express app
+
+// Connect to MongoDB
+connectDB();
+
+// Middleware
 app.use(express.json());
+
+// Root route - API information
 app.get("/", (req, res) => {
-  res.send("lakshman");
+  res.json({
+    message: "Welcome to the Student Management API",
+    endpoints: {
+      root: "/",
+      students: "/api/students",
+      users: "/users",
+    },
+  });
 });
+
+//my first express app
 app.get("/user/add", (req, res) => {
   const name = req.query.name;
   const email = req.query.email;
@@ -70,6 +89,8 @@ app.get("/users/id", async (req, res) => {
   }
 });
 
+// Student Routes - Mount the student routes
+app.use("/api/students", studentRoutes);
 
 //learning api calls in express
 app.listen(port, () => {
